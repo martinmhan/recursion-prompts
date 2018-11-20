@@ -33,11 +33,9 @@ var sum = function(array) {
 var arraySum = function(array) {
   if (typeof array === 'number') {
     return array;
-  } else if (array.every(function(element) {return typeof element === 'number';})) {
-    return sum(array);
   } else {
-    return sum(array.map(arraySum));
-  }
+		return sum(array.map(x => arraySum(x)));
+	}
 };
 
 // 4. Check if a number is even.
@@ -211,6 +209,18 @@ var divide = function(x, y) {
 // http://www.cse.wustl.edu/~kjg/cse131/Notes/Recursion/recursion.html
 // https://www.khanacademy.org/computing/computer-science/cryptography/modarithmetic/a/the-euclidean-algorithm
 var gcd = function(x, y) {
+	let max = Math.max(x, y);
+	let min = Math.min(x, y);
+
+	if (x < 0 || y < 0) {
+		return null;
+	} else if (x === y) {
+		return x;
+	} else if (max%min === 0) {
+		return min;
+	} else {
+		return gcd(min, max % min);
+	}
 };
 
 // 15. Write a function that compares each character of two strings and returns true if
@@ -218,21 +228,41 @@ var gcd = function(x, y) {
 // compareStr('house', 'houses') // false
 // compareStr('tomato', 'tomato') // true
 var compareStr = function(str1, str2) {
+	if (str1.length === 0 && str2.length === 0) {
+		return true;
+	} else {
+		return (str1[0] === str2[0]) && compareStr(str1.slice(1), str2.slice(1));
+	}
 };
 
 // 16. Write a function that accepts a string and creates an array where each letter
 // occupies an index of the array.
 var createArray = function(str) {
+	if (str.length === 1) {
+		return [str[0]];
+	} else {
+		return [str[0], ...createArray(str.slice(1))];
+	}
 };
 
 // 17. Reverse the order of an array
 var reverseArr = function(array) {
+	if (array.length <= 1) {
+		return array;
+	} else {
+		return [array[array.length - 1], ...reverseArr(array.slice(0, array.length - 1))];
+	}
 };
 
 // 18. Create a new array with a given value and length.
 // buildList(0,5) // [0,0,0,0,0]
 // buildList(7,3) // [7,7,7]
 var buildList = function(value, length) {
+	if (length === 1) {
+		return [value];
+	} else {
+		return [value, ...buildList(value, length - 1)];
+	}
 };
 
 // 19. Implement FizzBuzz. Given integer n, return an array of the string representations of 1 to n.
@@ -241,17 +271,44 @@ var buildList = function(value, length) {
 // For numbers which are multiples of both three and five, output “FizzBuzz” instead of the number.
 // fizzBuzz(5) // ['1','2','Fizz','4','Buzz']
 var fizzBuzz = function(n) {
+	if (n === 1) {
+		return ['1'];
+	} else {
+		let num;
+		if (n%3 === 0 && n%5 === 0) {
+			num = 'FizzBuzz';
+		} else if (n%3 === 0) {
+			num = 'Fizz';
+		} else if (n%5 === 0) {
+			num = 'Buzz';
+		} else {
+			num = n.toString();
+		}
+		return [...fizzBuzz(n - 1), num];
+	}
 };
 
 // 20. Count the occurence of a value in a list.
 // countOccurrence([2,7,4,4,1,4], 4) // 3
 // countOccurrence([2,'banana',4,4,1,'banana'], 'banana') // 2
 var countOccurrence = function(array, value) {
+	let count = array[0] === value ? 1 : 0;
+	if (array.length === 1) {
+		return count;
+	} else {
+		return count + countOccurrence(array.slice(1), value);
+	}
 };
 
 // 21. Write a recursive version of map.
 // rMap([1,2,3], timesTwo); // [2,4,6]
 var rMap = function(array, callback) {
+	let first = callback(array[0]);
+	if (array.length === 1) {
+		return [first];
+	} else {
+		return [first, ...rMap(array.slice(1), callback)];
+	}
 };
 
 // 22. Write a function that counts the number of times a key occurs in an object.
@@ -259,6 +316,17 @@ var rMap = function(array, callback) {
 // countKeysInObj(obj, 'r') // 1
 // countKeysInObj(obj, 'e') // 2
 var countKeysInObj = function(obj, key) {
+	let count = 0;
+	if (typeof obj !== 'string') {
+		for (let k in obj) {
+			if (k === key) {
+				count += 1;
+			}
+			count += countKeysInObj(obj[k], key); 
+		}
+	}
+	
+	return count;
 };
 
 // 23. Write a function that counts the number of times a value occurs in an object.
@@ -266,6 +334,16 @@ var countKeysInObj = function(obj, key) {
 // countValuesInObj(obj, 'r') // 2
 // countValuesInObj(obj, 'e') // 1
 var countValuesInObj = function(obj, value) {
+	let count = 0;
+	if (typeof obj === 'string') {
+		count += obj === value ? 1 : 0;
+	} else {
+		for (let k in obj) {
+			count += countValuesInObj(obj[k], value);
+		}
+	}
+
+	return count;
 };
 
 // 24. Find all keys in an object (and nested objects) by a provided name and rename
