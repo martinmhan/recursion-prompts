@@ -514,6 +514,13 @@ var augmentElements = function(array, aug) {
 // minimizeZeroes([2,0,0,0,1,4]) // [2,0,1,4]
 // minimizeZeroes([2,0,0,0,1,0,0,4]) // [2,0,1,0,4]
 var minimizeZeroes = function(array) {
+	if (array.length === 1) {
+		return array;
+	} else if (array[0] === 0 && array[1] === 0) {
+		return minimizeZeroes(array.slice(1));
+	} else {
+		return [array[0], ...minimizeZeroes(array.slice(1))];
+	}
 };
 
 // 35. Alternate the numbers in an array between positive and negative regardless of
@@ -521,12 +528,36 @@ var minimizeZeroes = function(array) {
 // alternateSign([2,7,8,3,1,4]) // [2,-7,8,-3,1,-4]
 // alternateSign([-2,-7,8,3,-1,4]) // [2,-7,8,-3,1,-4]
 var alternateSign = function(array) {
+	if (array.length === 1) {
+		return [Math.abs(array[0])];
+	} else {
+		return [Math.abs(array[0]), ...alternateSign(array.slice(1)).map(x => -x)];
+	}
 };
 
 // 36. Given a string, return a string with digits converted to their word equivalent.
 // Assume all numbers are single digits (less than 10).
 // numToText("I have 5 dogs and 6 ponies"); // "I have five dogs and six ponies"
 var numToText = function(str) {
+	let nums = {
+		1: 'one',
+		2: 'two',
+		3: 'three',
+		4: 'four',
+		5: 'five',
+		6: 'six',
+		7: 'seven',
+		8: 'eight',
+		9: 'nine',
+	};
+
+	let firstChar = Object.keys(nums).includes(str[0]) ? nums[str[0]] : str[0];
+
+	if (str.length === 1) {
+		return firstChar;
+	} else {
+		return firstChar + numToText(str.slice(1));
+	}
 };
 
 
@@ -534,6 +565,7 @@ var numToText = function(str) {
 
 // 37. Return the number of times a tag occurs in the DOM.
 var tagCount = function(tag, node) {
+	
 };
 
 // 38. Write a function for binary search.
